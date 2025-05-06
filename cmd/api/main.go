@@ -2,11 +2,13 @@ package main
 
 import (
 	"log"
+
+	"github.com/drizlye0/GopherSocial/internal/env"
 )
 
 func main() {
 	cfg := &config{
-		addr: ":8080",
+		addr: env.GetString("ADDR", ":8080"),
 	}
 
 	app := &application{

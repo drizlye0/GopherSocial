@@ -43,6 +43,6 @@ func (app *application) run(mux http.Handler) error {
 		IdleTimeout:  time.Minute,
 	}
 
-	log.Println("server listen on port 8080")
+	log.Printf("server listen on port %s", app.config.addr)
 	return srv.ListenAndServe()
 }
