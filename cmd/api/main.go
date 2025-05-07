@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/drizlye0/GopherSocial/internal/db"
@@ -12,7 +13,7 @@ func main() {
 	cfg := &config{
 		addr: env.GetString("ADDR", ":8080"),
 		db: dbConfig{
-			addr:        env.GetString("DB_ADDR", "postgres://user:adminpass@localhost/social?sslmode=diabled"),
+			addr:        env.GetString("DB_ADDR", "postgres://user:adminpass@localhost/social?sslmode=disabled"),
 			maxOpenConn: env.GetInt("DB_MAX_OPEN_CONN", 30),
 			maxIdleConn: env.GetInt("DB_MAX_IDLE_CONN", 30),
 			maxIdleTime: env.GetString("DB_MAX_IDLE_TIME", "15m"),
@@ -31,6 +32,7 @@ func main() {
 	}
 
 	defer db.Close()
+	fmt.Println("db connection pool established")
 
 	store := store.NewStorage(db)
 
