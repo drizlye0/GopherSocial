@@ -1,10 +1,17 @@
 package main
 
 import (
+	"errors"
 	"net/http"
+	"strconv"
 
 	"github.com/drizlye0/GopherSocial/internal/store"
+	"github.com/go-chi/chi/v5"
 )
+
+type ctxKey string
+
+var postKey ctxKey = "post_ID"
 
 type createPostPayload struct {
 	Title   string   `json:"title"`
@@ -41,4 +48,32 @@ func (app *application) createPostHandler(w http.ResponseWriter, r *http.Request
 		return
 	}
 
+}
+
+func (app *application) getPostHandler(w http.ResponseWriter, r *http.Request) {
+	postID := chi.URLParam(r, "postID")
+	id, err := strconv.ParseInt(postID, 10, 64)
+	if err != nil {
+		writeJSON(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	ctx := r.Context()
+
+	post, err := app.store.Posts.GetByID(ctx, id)
+	if err != nil {
+		switch {
+		case errors.Is(err, store.ErrNoFound):
+			writeJSONError(w, http.StatusNotFound, err.Error())
+			return
+		default:
+			writeJSONError(w, http.StatusInternalServerError, err.Error())
+			return
+		}
+	}
+
+	if err := writeJSON(w, http.StatusOK, post); err != nil {
+		writeJSONError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
 }
