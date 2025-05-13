@@ -56,8 +56,8 @@ func (app *application) createPostHandler(w http.ResponseWriter, r *http.Request
 }
 
 func (app *application) getPostHandler(w http.ResponseWriter, r *http.Request) {
-	postID := chi.URLParam(r, "postID")
-	id, err := strconv.ParseInt(postID, 10, 64)
+	param := chi.URLParam(r, "postID")
+	id, err := strconv.ParseInt(param, 10, 64)
 	if err != nil {
 		app.internalServerError(w, r, err)
 		return
@@ -89,4 +89,28 @@ func (app *application) getPostHandler(w http.ResponseWriter, r *http.Request) {
 		app.internalServerError(w, r, err)
 		return
 	}
+}
+
+func (app *application) deletePostHandler(w http.ResponseWriter, r *http.Request) {
+	param := chi.URLParam(r, "postID")
+	id, err := strconv.ParseInt(param, 10, 64)
+	if err != nil {
+		app.internalServerError(w, r, err)
+		return
+	}
+
+	ctx := r.Context()
+
+	err = app.store.Posts.DeleteByID(ctx, id)
+	if err != nil {
+		switch {
+		case errors.Is(err, store.ErrNoFound):
+			app.notFoundResponse(w, r, err)
+		default:
+			app.internalServerError(w, r, err)
+		}
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
 }
