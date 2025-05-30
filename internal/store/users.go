@@ -71,7 +71,7 @@ func (s *UserStore) GetByID(ctx context.Context, userID int64) (*User, error) {
 	if err != nil {
 		switch {
 		case errors.Is(err, sql.ErrNoRows):
-			return nil, ErrNoFound
+			return nil, ErrNotFound
 		default:
 			return nil, err
 		}

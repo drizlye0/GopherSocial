@@ -94,7 +94,7 @@ func (app *application) userContextMiddleware(next http.Handler) http.Handler {
 		user, err := app.store.Users.GetByID(ctx, id)
 		if err != nil {
 			switch {
-			case errors.Is(err, store.ErrNoFound):
+			case errors.Is(err, store.ErrNotFound):
 				app.notFoundResponse(w, r, err)
 				return
 			default:

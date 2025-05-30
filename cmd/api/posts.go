@@ -86,7 +86,7 @@ func (app *application) deletePostHandler(w http.ResponseWriter, r *http.Request
 	err = app.store.Posts.DeleteByID(ctx, id)
 	if err != nil {
 		switch {
-		case errors.Is(err, store.ErrNoFound):
+		case errors.Is(err, store.ErrNotFound):
 			app.notFoundResponse(w, r, err)
 		default:
 			app.internalServerError(w, r, err)
@@ -150,7 +150,7 @@ func (app *application) postsContextMiddleware(next http.Handler) http.Handler {
 		post, err := app.store.Posts.GetByID(ctx, id)
 		if err != nil {
 			switch {
-			case errors.Is(err, store.ErrNoFound):
+			case errors.Is(err, store.ErrNotFound):
 				app.notFoundResponse(w, r, err)
 				return
 			default:
