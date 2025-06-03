@@ -27,13 +27,14 @@ func (app *application) getUserFeedHandler(w http.ResponseWriter, r *http.Reques
 	ctx := r.Context()
 
 	// TODO: replace hardcoded data when implments auth
-	posts, err := app.store.Posts.GetUserFeed(ctx, int64(341), fq)
+	feed, err := app.store.Posts.GetUserFeed(ctx, int64(100), fq)
 	if err != nil {
 		app.internalServerError(w, r, err)
 		return
 	}
 
-	if err := app.jsonResponse(w, http.StatusOK, posts); err != nil {
+	if err := app.jsonResponse(w, http.StatusOK, feed); err != nil {
 		app.internalServerError(w, r, err)
+		return
 	}
 }
