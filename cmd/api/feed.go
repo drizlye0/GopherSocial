@@ -11,6 +11,8 @@ func (app *application) getUserFeedHandler(w http.ResponseWriter, r *http.Reques
 		Limit:  10,
 		Offset: 0,
 		Sort:   "desc",
+		Since:  "1970-01-01 00:00:00",
+		Until:  "9999-12-31 23:59:59",
 	}
 
 	fq, err := fq.Parse(r)
