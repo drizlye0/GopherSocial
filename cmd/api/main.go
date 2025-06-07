@@ -30,7 +30,7 @@ const version = "0.0.1"
 func main() {
 	cfg := &config{
 		addr:   env.GetString("ADDR", ":8080"),
-		apiURL: env.GetString("EXTERNAL_URL", "localhost:3000"),
+		apiURL: env.GetString("EXTERNAL_URL", "localhost:3000/"),
 		db: dbConfig{
 			addr:        env.GetString("DB_ADDR", "postgres://user:adminpass@localhost/social?sslmode=disabled"),
 			maxOpenConn: env.GetInt("DB_MAX_OPEN_CONN", 30),
