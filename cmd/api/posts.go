@@ -75,7 +75,6 @@ func (app *application) createPostHandler(w http.ResponseWriter, r *http.Request
 //	@Summary		Get a Post
 //	@Description	Get a user post with Post ID
 //	@Tags			posts
-//	@Accept			json
 //	@Produce		json
 //	@Param			id	path		int	true	"Post ID"
 //	@Success		200	{object}	store.Post

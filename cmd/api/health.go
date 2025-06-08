@@ -2,6 +2,15 @@ package main
 
 import "net/http"
 
+// CheckHealth godoc
+//
+//	@Summary		Check server health
+//	@Description	Check server status
+//	@Tags			ops
+//	@Produce		json
+//	@Success		200	{object}	string	"ok"
+//	@Security		ApiKeyAuth
+//	@Router			/health [get]
 func (app *application) checkHealth(w http.ResponseWriter, r *http.Request) {
 
 	data := map[string]string{
