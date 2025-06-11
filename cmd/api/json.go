@@ -42,5 +42,5 @@ func (app *application) jsonResponse(w http.ResponseWriter, status int, data any
 		Data any `json:"data"`
 	}
 
-	return writeJSON(w, http.StatusOK, &envelope{Data: data})
+	return writeJSON(w, status, &envelope{Data: data})
 }
