@@ -3,6 +3,7 @@ package mailer
 import (
 	"bytes"
 	"fmt"
+	"html/template"
 	"log"
 	"time"
 
@@ -30,8 +31,19 @@ func (m *SendGridMailer) Send(templateFile, username, email string, data any, is
 	from := mail.NewEmail(FromName, m.fromEmail)
 	to := mail.NewEmail(username, email)
 
+	tmpl, err := template.ParseFS(FS, "templates/"+templateFile)
+	if err != nil {
+		return err
+	}
+
 	subject := new(bytes.Buffer)
+	if err := tmpl.ExecuteTemplate(subject, "subject", data); err != nil {
+		return err
+	}
 	body := new(bytes.Buffer)
+	if err := tmpl.ExecuteTemplate(body, "body", data); err != nil {
+		return err
+	}
 
 	message := mail.NewSingleEmail(from, subject.String(), to, "", body.String())
 	message.SetMailSettings(&mail.MailSettings{
