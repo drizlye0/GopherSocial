@@ -18,7 +18,7 @@ type application struct {
 	config config
 	store  *store.Storage
 	logger *zap.SugaredLogger
-	mailer *mailer.Client
+	mailer mailer.Client
 }
 
 type config struct {
@@ -30,7 +30,13 @@ type config struct {
 }
 
 type mailConfig struct {
-	exp time.Duration
+	sengrid   sendGridConfig
+	exp       time.Duration
+	fromEmail string
+}
+
+type sendGridConfig struct {
+	apiKey string
 }
 
 type dbConfig struct {

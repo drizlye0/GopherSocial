@@ -5,6 +5,7 @@ import (
 
 	"github.com/drizlye0/GopherSocial/internal/db"
 	"github.com/drizlye0/GopherSocial/internal/env"
+	"github.com/drizlye0/GopherSocial/internal/mailer"
 	"github.com/drizlye0/GopherSocial/internal/store"
 	"go.uber.org/zap"
 )
@@ -39,7 +40,11 @@ func main() {
 		},
 		env: env.GetString("ENV", "development"),
 		mail: mailConfig{
-			exp: time.Hour * 24 * 3, // 3 days
+			exp:       time.Hour * 24 * 3, // 3 days
+			fromEmail: env.GetString("FROM_EMAIL", ""),
+			sengrid: sendGridConfig{
+				apiKey: env.GetString("SENGRID_API_KEY", ""),
+			},
 		},
 	}
 
@@ -63,10 +68,13 @@ func main() {
 
 	store := store.NewStorage(db)
 
+	mailer := mailer.NewSendgrid(cfg.mail.sengrid.apiKey, cfg.mail.fromEmail)
+
 	app := &application{
 		config: *cfg,
 		store:  store,
 		logger: logger,
+		mailer: mailer,
 	}
 
 	mux := app.mount()
