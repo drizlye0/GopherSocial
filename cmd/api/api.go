@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/drizlye0/GopherSocial/docs"
+	"github.com/drizlye0/GopherSocial/internal/auth"
 	"github.com/drizlye0/GopherSocial/internal/mailer"
 	"github.com/drizlye0/GopherSocial/internal/store"
 	"github.com/go-chi/chi/v5"
@@ -16,10 +17,11 @@ import (
 )
 
 type application struct {
-	config config
-	store  *store.Storage
-	logger *zap.SugaredLogger
-	mailer mailer.Client
+	config        config
+	store         *store.Storage
+	logger        *zap.SugaredLogger
+	mailer        mailer.Client
+	authenticator auth.Authenticator
 }
 
 type config struct {
@@ -34,6 +36,13 @@ type config struct {
 
 type authConfig struct {
 	basic basicConfig
+	token tokenConfig
+}
+
+type tokenConfig struct {
+	secret string
+	exp    time.Duration
+	iss    string
 }
 
 type basicConfig struct {

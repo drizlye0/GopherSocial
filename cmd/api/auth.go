@@ -5,9 +5,11 @@ import (
 	"encoding/hex"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/drizlye0/GopherSocial/internal/mailer"
 	"github.com/drizlye0/GopherSocial/internal/store"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
 )
 
@@ -149,18 +151,36 @@ func (app *application) createTokenHandler(w http.ResponseWriter, r *http.Reques
 	}
 
 	// fetch the user (check if the user exists) from the payload
-
 	user, err := app.store.Users.GetByEmail(r.Context(), payload.Email)
 	if err != nil {
 		switch err {
-			case store.ErrNotFound:
+		case store.ErrNotFound:
+			app.unauthorizedErrorResponse(w, r, err)
+			return
+		default:
+			app.internalServerError(w, r, err)
+			return
 		}
 	}
 
 	// generate the token -> add claims
-	// send it to the client
+	claims := jwt.MapClaims{
+		"sub": user.ID,
+		"exp": time.Now().Add(app.config.auth.token.exp).Unix(),
+		"iat": time.Now().Unix(),
+		"nbf": time.Now().Unix(),
+		"iss": app.config.auth.token.iss,
+		"aud": app.config.auth.token.iss,
+	}
 
-	if err := app.jsonResponse(w, http.StatusCreated, nil); err != nil {
+	token, err := app.authenticator.GenerateToken(claims)
+	if err != nil {
+		app.internalServerError(w, r, err)
+		return
+	}
+
+	// send it to the client
+	if err := app.jsonResponse(w, http.StatusCreated, token); err != nil {
 		app.internalServerError(w, r, err)
 		return
 	}
