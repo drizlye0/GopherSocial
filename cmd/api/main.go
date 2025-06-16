@@ -71,7 +71,6 @@ func main() {
 		cfg.db.maxIdleConn,
 		cfg.db.maxIdleTime,
 	)
-
 	if err != nil {
 		logger.Fatal(err)
 	}
@@ -99,7 +98,6 @@ func main() {
 
 	mux := app.mount()
 	err = app.run(mux)
-
 	if err != nil {
 		logger.Fatal(err)
 	}

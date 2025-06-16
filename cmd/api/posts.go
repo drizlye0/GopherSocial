@@ -47,13 +47,13 @@ func (app *application) createPostHandler(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	userID := 1
+	user := getUserFromCtx(r)
 
 	post := &store.Post{
 		Title:   payload.Title,
 		Content: payload.Content,
-		UserID:  int64(userID),
 		Tags:    payload.Tags,
+		UserID:  user.ID,
 	}
 
 	ctx := r.Context()
@@ -67,7 +67,6 @@ func (app *application) createPostHandler(w http.ResponseWriter, r *http.Request
 		app.internalServerError(w, r, err)
 		return
 	}
-
 }
 
 // GetPost godoc

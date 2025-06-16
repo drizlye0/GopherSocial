@@ -38,12 +38,11 @@ func (app *application) createCommentHandler(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	// TODO: refactor when implements auth
-	userID := 2
+	user := getUserFromCtx(r)
 
 	comment := &store.Comment{
 		PostID:  post.ID,
-		UserID:  int64(userID),
+		UserID:  user.ID,
 		Content: payload.Content,
 	}
 
