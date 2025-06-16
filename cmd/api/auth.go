@@ -126,12 +126,12 @@ type CreateUserTokenPayload struct {
 // RegisterUser godoc
 //
 //	@Summary		Creates a token
-//	@Description Creates a token for a user
+//	@Description	Creates a token for a user
 //	@Tags			authentication
 //	@Accept			json
 //	@Produce		json
 //	@Param			payload	body		CreateUserTokenPayload	true	"User Credentials"
-//	@Success		201		{object}	string		"Token"
+//	@Success		201		{object}	string					"Token"
 //	@Failure		400		{object}	error
 //	@Failure		401		{object}	error
 //	@Failure		500		{object}	error
@@ -161,6 +161,12 @@ func (app *application) createTokenHandler(w http.ResponseWriter, r *http.Reques
 			app.internalServerError(w, r, err)
 			return
 		}
+	}
+
+	// check if password is valid
+	if err = user.Password.Compare(payload.Password); err != nil {
+		app.unauthorizedErrorResponse(w, r, fmt.Errorf("invalid credentials"))
+		return
 	}
 
 	// generate the token -> add claims
