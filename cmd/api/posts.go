@@ -147,9 +147,12 @@ type UpdatePostPayload struct {
 //	@Tags			posts
 //	@Accept			json
 //	@Produce		json
+//	@Param			id		path		int					true	"Post ID"
 //	@Param			payload	body		UpdatePostPayload	true	"UpdatePost Payload"
 //	@Success		200		{object}	store.Post
+//	@Failure		400		{object}	error
 //	@Failure		404		{object}	error	"User not found"
+//	@Failure		401		{object}	error
 //	@Failure		500		{object}	error
 //	@Security		ApiKeyAuth
 //	@Router			/posts/{id} [patch]

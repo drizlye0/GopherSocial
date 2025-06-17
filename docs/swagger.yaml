@@ -141,6 +141,17 @@ definitions:
       version:
         type: integer
     type: object
+  store.Role:
+    properties:
+      description:
+        type: string
+      id:
+        type: integer
+      level:
+        type: integer
+      name:
+        type: string
+    type: object
   store.User:
     properties:
       created_at:
@@ -151,6 +162,10 @@ definitions:
         type: integer
       is_active:
         type: boolean
+      role:
+        $ref: '#/definitions/store.Role'
+      role_id:
+        type: integer
       username:
         type: string
     type: object
@@ -337,6 +352,11 @@ paths:
       - application/json
       description: Update a user post
       parameters:
+      - description: Post ID
+        in: path
+        name: id
+        required: true
+        type: integer
       - description: UpdatePost Payload
         in: body
         name: payload
@@ -350,6 +370,12 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/store.Post'
+        "400":
+          description: Bad Request
+          schema: {}
+        "401":
+          description: Unauthorized
+          schema: {}
         "404":
           description: User not found
           schema: {}
