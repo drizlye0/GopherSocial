@@ -25,10 +25,10 @@ func (s *RoleStore) GetByName(ctx context.Context, roleName string) (*Role, erro
 
 	role := &Role{}
 	err := s.db.QueryRowContext(ctx, query, roleName).Scan(
-		role.ID,
-		role.Name,
-		role.Level,
-		role.Description,
+		&role.ID,
+		&role.Name,
+		&role.Level,
+		&role.Description,
 	)
 
 	if err != nil {
