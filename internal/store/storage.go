@@ -42,8 +42,8 @@ type Storage struct {
 	}
 }
 
-func NewStorage(db *sql.DB) *Storage {
-	return &Storage{
+func NewStorage(db *sql.DB) Storage {
+	return Storage{
 		Posts:     &PostStore{db},
 		Users:     &UserStore{db},
 		Comments:  &CommentStore{db},

@@ -19,8 +19,8 @@ import (
 
 type application struct {
 	config        config
-	cacheStorage  *cache.Storage
-	store         *store.Storage
+	cacheStorage  cache.Storage
+	store         store.Storage
 	logger        *zap.SugaredLogger
 	mailer        mailer.Client
 	authenticator auth.Authenticator
