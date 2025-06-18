@@ -29,10 +29,23 @@ var userCtx userKey = "user"
 //	@Security		ApiKeyAuth
 //	@Router			/users/{id} [get]
 func (app *application) getUserHandler(w http.ResponseWriter, r *http.Request) {
-	user, err := app.getUserFromURL(r)
+	userID, err := strconv.ParseInt(chi.URLParam(r, "userID"), 10, 64)
 	if err != nil {
-		app.notFoundResponse(w, r, err)
+		app.internalServerError(w, r, err)
 		return
+	}
+
+	ctx := r.Context()
+	user, err := app.getUser(ctx, userID)
+	if err != nil {
+		switch err {
+		case store.ErrNotFound:
+			app.notFoundResponse(w, r, err)
+			return
+		default:
+			app.internalServerError(w, r, err)
+			return
+		}
 	}
 
 	if err := app.jsonResponse(w, http.StatusOK, user); err != nil {
@@ -147,37 +160,6 @@ func (app *application) activateUserHandler(w http.ResponseWriter, r *http.Reque
 		app.internalServerError(w, r, err)
 		return
 	}
-}
-
-func (app *application) getUserFromURL(r *http.Request) (*store.User, error) {
-	userID, err := strconv.ParseInt(chi.URLParam(r, "userID"), 10, 64)
-	if err != nil {
-		fmt.Println("parseInt not work")
-		return nil, err
-	}
-
-	// TODO: IMPROVE CONDITIONS
-	// check if the user is in cache cache store
-	ctx := r.Context()
-	user, err := app.cacheStorage.Users.Get(ctx, userID)
-	if err != nil {
-		fmt.Println("cache store on get")
-		return nil, err
-	}
-	if user == nil {
-		user, err = app.store.Users.GetByID(ctx, userID)
-		if err != nil {
-			fmt.Println("user store")
-			return nil, err
-		}
-
-		if err := app.cacheStorage.Users.Set(ctx, user); err != nil {
-			fmt.Println("cache store on set")
-			return nil, err
-		}
-	}
-
-	return user, nil
 }
 
 func (app *application) userContextMiddleware(next http.Handler) http.Handler {
