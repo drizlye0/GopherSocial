@@ -9,6 +9,7 @@ import (
 	"github.com/drizlye0/GopherSocial/internal/auth"
 	"github.com/drizlye0/GopherSocial/internal/mailer"
 	"github.com/drizlye0/GopherSocial/internal/store"
+	"github.com/drizlye0/GopherSocial/internal/store/cache"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
@@ -18,6 +19,7 @@ import (
 
 type application struct {
 	config        config
+	cacheStorage  *cache.Storage
 	store         *store.Storage
 	logger        *zap.SugaredLogger
 	mailer        mailer.Client
@@ -32,6 +34,14 @@ type config struct {
 	mail        mailConfig
 	frontendURL string
 	auth        authConfig
+	redisCfg    redisConfig
+}
+
+type redisConfig struct {
+	addr    string
+	pw      string
+	db      int
+	enabled bool
 }
 
 type authConfig struct {

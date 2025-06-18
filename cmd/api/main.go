@@ -8,6 +8,8 @@ import (
 	"github.com/drizlye0/GopherSocial/internal/env"
 	"github.com/drizlye0/GopherSocial/internal/mailer"
 	"github.com/drizlye0/GopherSocial/internal/store"
+	"github.com/drizlye0/GopherSocial/internal/store/cache"
+	"github.com/go-redis/redis/v8"
 	"go.uber.org/zap"
 )
 
@@ -39,6 +41,12 @@ func main() {
 			maxOpenConn: env.GetInt("DB_MAX_OPEN_CONN", 30),
 			maxIdleConn: env.GetInt("DB_MAX_IDLE_CONN", 30),
 			maxIdleTime: env.GetString("DB_MAX_IDLE_TIME", "15m"),
+		},
+		redisCfg: redisConfig{
+			addr:    env.GetString("REDIS_ADDR", "localhost:6379"),
+			pw:      env.GetString("REDIS_PW", ""),
+			db:      env.GetInt("REDIS_DB", 0),
+			enabled: env.GetBool("REDIS_ENABLED", false),
 		},
 		env: env.GetString("ENV", "development"),
 		mail: mailConfig{
@@ -78,7 +86,14 @@ func main() {
 	defer db.Close()
 	logger.Info("db connection pool established")
 
+	var rdb *redis.Client
+	if cfg.redisCfg.enabled {
+		rdb = cache.NewRedisClient(cfg.redisCfg.addr, cfg.redisCfg.pw, cfg.redisCfg.db)
+		logger.Info("redis cahe connection established")
+	}
+
 	store := store.NewStorage(db)
+	cacheStorage := cache.NewRedisStorage(rdb)
 
 	mailer := mailer.NewSendgrid(cfg.mail.sengrid.apiKey, cfg.mail.fromEmail)
 
@@ -90,6 +105,7 @@ func main() {
 
 	app := &application{
 		config:        *cfg,
+		cacheStorage:  cacheStorage,
 		store:         store,
 		logger:        logger,
 		mailer:        mailer,
