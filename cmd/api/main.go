@@ -7,6 +7,7 @@ import (
 	"github.com/drizlye0/GopherSocial/internal/db"
 	"github.com/drizlye0/GopherSocial/internal/env"
 	"github.com/drizlye0/GopherSocial/internal/mailer"
+	"github.com/drizlye0/GopherSocial/internal/ratelimiter"
 	"github.com/drizlye0/GopherSocial/internal/store"
 	"github.com/drizlye0/GopherSocial/internal/store/cache"
 	"github.com/go-redis/redis/v8"
@@ -67,6 +68,11 @@ func main() {
 				iss:    "gophersocial",
 			},
 		},
+		rateLimiter: ratelimiter.Config{
+			RequestPerTimeFrame: env.GetInt("RATELIMITER_REQUEST_COUNT", 20),
+			TimeFrame:           time.Second * 5,
+			Enabled:             env.GetBool("RATELIMITER_ENABLED", true),
+		},
 	}
 
 	// Logger
@@ -92,6 +98,11 @@ func main() {
 		logger.Info("redis cahe connection established")
 	}
 
+	rateLimiter := ratelimiter.NewFixedWindowLimiter(
+		cfg.rateLimiter.RequestPerTimeFrame,
+		cfg.rateLimiter.TimeFrame,
+	)
+
 	store := store.NewStorage(db)
 	cacheStorage := cache.NewRedisStorage(rdb)
 
@@ -110,6 +121,7 @@ func main() {
 		logger:        logger,
 		mailer:        mailer,
 		authenticator: jwtAuthenticator,
+		rateLimiter:   rateLimiter,
 	}
 
 	mux := app.mount()
