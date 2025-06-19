@@ -50,7 +50,7 @@ var tags = []string{
 	"go", "docker", "productividad", "freelance", "git", "rust", "entrevistas", "aprender", "api", "react", "vue", "wasm", "scrum", "bash", "remoto", "backend", "frontend", "basesdedatos", "codigo", "tutorial",
 }
 
-func Seed(s *store.Storage, db *sql.DB) {
+func Seed(s store.Storage, db *sql.DB) {
 	ctx := context.Background()
 
 	users := generateUsers(100)
