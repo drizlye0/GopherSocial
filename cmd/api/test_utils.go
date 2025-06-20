@@ -6,24 +6,31 @@ import (
 	"testing"
 
 	"github.com/drizlye0/GopherSocial/internal/auth"
+	"github.com/drizlye0/GopherSocial/internal/ratelimiter"
 	"github.com/drizlye0/GopherSocial/internal/store"
 	"github.com/drizlye0/GopherSocial/internal/store/cache"
 	"go.uber.org/zap"
 )
 
-func newTestApplication(t *testing.T) *application {
+func newTestApplication(t *testing.T, cfg config) *application {
 	t.Helper()
 
 	logger := zap.NewNop().Sugar()
 	store := store.NewMockStore()
 	cacheStorage := cache.NewMockStore()
 	testAuth := &auth.TestAuthenticator{}
+	reateLimiter := ratelimiter.NewFixedWindowLimiter(
+		cfg.rateLimiter.RequestPerTimeFrame,
+		cfg.rateLimiter.TimeFrame,
+	)
 
 	return &application{
+		config:        cfg,
 		logger:        logger,
 		store:         store,
 		cacheStorage:  cacheStorage,
 		authenticator: testAuth,
+		rateLimiter:   reateLimiter,
 	}
 }
 

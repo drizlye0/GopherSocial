@@ -21,9 +21,9 @@ func NewFixedWindowLimiter(limit int, window time.Duration) *FixedWindowRateLimi
 }
 
 func (rl *FixedWindowRateLimiter) Allow(ip string) (bool, time.Duration) {
-	rl.Lock()
+	rl.RLock()
 	count, exists := rl.clients[ip]
-	rl.Unlock()
+	rl.RUnlock()
 
 	if !exists || count < rl.limit {
 		rl.Lock()

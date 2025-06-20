@@ -6,7 +6,7 @@ import (
 )
 
 func TestGetUser(t *testing.T) {
-	app := newTestApplication(t)
+	app := newTestApplication(t, config{})
 	mux := app.mount()
 	malformedToken := "abd123"
 	token, err := app.authenticator.GenerateToken(nil)
