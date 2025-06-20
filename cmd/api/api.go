@@ -12,6 +12,7 @@ import (
 
 	"github.com/drizlye0/GopherSocial/docs"
 	"github.com/drizlye0/GopherSocial/internal/auth"
+	"github.com/drizlye0/GopherSocial/internal/env"
 	"github.com/drizlye0/GopherSocial/internal/mailer"
 	"github.com/drizlye0/GopherSocial/internal/ratelimiter"
 	"github.com/drizlye0/GopherSocial/internal/store"
@@ -87,19 +88,19 @@ type dbConfig struct {
 
 func (app *application) mount() http.Handler {
 	r := chi.NewMux()
+
+	r.Use(middleware.RequestID)
+	r.Use(middleware.RealIP)
+	r.Use(middleware.Logger)
+	r.Use(middleware.Recoverer)
 	r.Use(cors.Handler(cors.Options{
-		AllowedOrigins:   []string{"https://*", "http://*"},
+		AllowedOrigins:   []string{env.GetString("CORS_ALLOWED_ORIGIN", "http://localhost:5173")},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
 		ExposedHeaders:   []string{"Link"},
 		AllowCredentials: false,
 		MaxAge:           300, // Maximum value not ignored by any of major browsers
 	}))
-
-	r.Use(middleware.RequestID)
-	r.Use(middleware.RealIP)
-	r.Use(middleware.Logger)
-	r.Use(middleware.Recoverer)
 	if app.config.rateLimiter.Enabled {
 		r.Use(app.RateLimiterMiddleware)
 	}
