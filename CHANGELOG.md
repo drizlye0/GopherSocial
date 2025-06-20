@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/drizlye0/GopherSocial/compare/v1.0.0...v1.1.0) (2025-06-20)
+
+
+### Features
+
+* action for auto update version ([8a8e190](https://github.com/drizlye0/GopherSocial/commit/8a8e190e9319969c5e878e3543c6b4ddce160eeb))
+
 ## 1.0.0 (2025-06-20)
 
 
