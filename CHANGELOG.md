@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.2.0](https://github.com/drizlye0/GopherSocial/compare/v1.1.0...v1.2.0) (2025-06-20)
+
+
+### Features
+
+* Dockerfile ([e9d5f7e](https://github.com/drizlye0/GopherSocial/commit/e9d5f7ed4ecaf8b44ab51d866443e40169b129b1))
+
+
+### Bug Fixes
+
+* change manual version ([98cb915](https://github.com/drizlye0/GopherSocial/commit/98cb915b408922ff625c68e071b0dcc9c3299f2a))
+
 ## [1.1.0](https://github.com/drizlye0/GopherSocial/compare/v1.0.0...v1.1.0) (2025-06-20)
 
 
